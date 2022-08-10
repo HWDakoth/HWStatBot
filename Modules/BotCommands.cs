@@ -67,14 +67,14 @@ namespace HWStatBot.Services
 
 
     // interation modules must be public and inherit from an IInterationModuleBase
-    public class ExampleCommands : InteractionModuleBase<SocketInteractionContext>
+    public class BotCommands : InteractionModuleBase<SocketInteractionContext>
     {
         // dependencies can be accessed through Property injection, public properties with public setters will be set by the service provider
         public InteractionService Commands { get; set; }
         private CommandHandler _handler;
 
         // constructor injection is also a valid way to access the dependecies
-        public ExampleCommands(CommandHandler handler)
+        public BotCommands(CommandHandler handler)
         {
             _handler = handler;
         }
@@ -532,11 +532,11 @@ namespace HWStatBot.Services
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://wax.api.atomicassets.io/atomicassets/v1/burns?collection_name=hotwheels&schema_name=coin&template_id=564478&page=1&limit=100&order=desc");
                 request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
-                string logFile = DateTime.Now.ToString("yyyyMMdd") + ".txt";
-                if (!File.Exists(logFile))
-                {
-                    File.Create(logFile);
-                }
+                // string logFile = DateTime.Now.ToString("yyyyMMdd") + ".txt";
+                // if (!File.Exists(logFile))
+                // {
+                //     File.Create(logFile);
+                // }
 
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 using (Stream stream = response.GetResponseStream())
