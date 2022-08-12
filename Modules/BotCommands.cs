@@ -319,7 +319,7 @@ namespace HWStatBot.Services
         }
 
 
-        [SlashCommand("s2stats", "Final Stats for Season 1")]
+        [SlashCommand("s2stats", "Current Pack and Premium+ Stats for S2")]
         public async Task S2Stats()
         {
 
@@ -523,7 +523,7 @@ namespace HWStatBot.Services
             await RespondAsync($"**{body}**");
         }
 
-        [SlashCommand("s2redeem", "Stats For Season 3 Premium and Above Cars")]
+        [SlashCommand("s2redeem", "Stats For Season 2 Redeem")]
         public async Task S2Redeem()
         {
 
@@ -755,5 +755,502 @@ namespace HWStatBot.Services
 
         }
 
+
+        [SlashCommand("allsets", "Count of all set holders")]
+        public async Task AllSetHolders()
+        {
+            await DeferAsync();
+            string body;
+
+            string[] templates = { "353670", "353671", "353672", "353673", "353674", "353675", "353676", "353677", "353678", "353679", "353681", "353682", "353683", "353685", "353691", "353686", "353687", "353688", "353689", "353690", "353693", "353694", "353695", "353696", "353697", "353698", "353700", "353701", "353702", "353703", "353704", "353706", "353707", "353708", "353709", "362065", "362066", "362067", "362068", "353680" };
+
+            HttpWebRequest request;
+
+            Dictionary<string, Dictionary<string, int>> accountS1Dict = new Dictionary<string, Dictionary<string, int>>();
+
+            int i = 0;
+
+            while (i < templates.Length)
+            {
+                try
+                {
+                    string t = templates[i];
+
+                    string address = "https://wax.api.atomicassets.io/atomicassets/v1/accounts?collection_name=hotwheels&schema_name=series1&template_id=" + t + "&page=1&limit=5000&order=desc";
+                    request = (HttpWebRequest)WebRequest.Create(address);
+                    request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+
+                    using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                    using (Stream stream = response.GetResponseStream())
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        string text = reader.ReadToEnd();
+
+                        AccountsRoot accountsRoot = JsonConvert.DeserializeObject<AccountsRoot>(text);
+                        foreach (var data in accountsRoot.data)
+                        {
+                            if (accountS1Dict.ContainsKey(data.account))
+                            {
+                                accountS1Dict[data.account][t] = int.Parse(data.assets);
+                            }
+                            else if (t == "353670")
+                            {
+                                Dictionary<string, int> temp = new Dictionary<string, int>();
+                                foreach (string plate in templates)
+                                {
+                                    temp.Add(plate, 0);
+                                }
+
+                                accountS1Dict.Add(data.account, temp);
+                                accountS1Dict[data.account][t] = int.Parse(data.assets);
+                            }
+                        }
+
+
+                    }
+                    System.Threading.Thread.Sleep(1000);
+                    i++;
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            accountS1Dict.Remove("premint.nft");
+            Dictionary<string, int> completeS1Sets = new Dictionary<string, int>();
+            int sets = 0;
+
+            foreach (var a in accountS1Dict)
+            {
+                int val = a.Value["353670"];
+
+                foreach (var b in a.Value)
+                {
+                    if (b.Value < val)
+                    {
+                        val = b.Value;
+                    }
+                    if (b.Value == 0)
+                    {
+                        val = b.Value;
+                        break;
+                    }
+                }
+                if (val != 0)
+                {
+                    completeS1Sets.Add(a.Key, val);
+                    sets += val;
+                }
+            }
+
+
+                body = "\r\nNumber of Completed Series 1 Sets(1-40): " + sets;
+                body += "\r\nUnique Owners of Completed Series 1 Sets(1-40): " + completeS1Sets.Count;
+
+            
+
+
+
+            string[] templatesS2 = { "473732", "476740", "476739", "476738", "476737", "476736", "473734", "473733", "473730", "473729", "473728", "473727", "473726", "473725", "473724", "473723", "473722", "473720", "473719", "473718", "473717", "473716", "473715", "473714", "473713", "473712", "473710", "473709", "473708", "473707", "473706", "473705", "473704", "473703", "473702", "473700", "473699", "473698", "473697", "473696", "473695", "473694", "473693" };
+
+
+            Dictionary<string, Dictionary<string, int>> accountS2Dict = new Dictionary<string, Dictionary<string, int>>();
+
+            i = 0;
+
+            while (i < templatesS2.Length)
+            {
+                try
+                {
+                    string t = templatesS2[i];
+
+                    string address = "https://wax.api.atomicassets.io/atomicassets/v1/accounts?collection_name=hotwheels&schema_name=series2&template_id=" + t + "&page=1&limit=5000&order=desc";
+                    request = (HttpWebRequest)WebRequest.Create(address);
+                    request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+
+                    using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                    using (Stream stream = response.GetResponseStream())
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        string text = reader.ReadToEnd();
+
+                        AccountsRoot accountsRoot = JsonConvert.DeserializeObject<AccountsRoot>(text);
+                        foreach (var data in accountsRoot.data)
+                        {
+                            if (accountS2Dict.ContainsKey(data.account))
+                            {
+                                accountS2Dict[data.account][t] = int.Parse(data.assets);
+                            }
+                            else if (t == "473732")
+                            {
+                                Dictionary<string, int> temp = new Dictionary<string, int>();
+                                foreach (string plate in templatesS2)
+                                {
+                                    temp.Add(plate, 0);
+                                }
+
+                                accountS2Dict.Add(data.account, temp);
+                                accountS2Dict[data.account][t] = int.Parse(data.assets);
+                            }
+                        }
+
+
+                    }
+                    System.Threading.Thread.Sleep(1000);
+                    i++;
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+
+
+
+            accountS2Dict.Remove("premint.nft");
+            Dictionary<string, int> completeS2Sets = new Dictionary<string, int>();
+            sets = 0;
+
+            foreach (var a in accountS2Dict)
+            {
+                int val = a.Value["473732"];
+
+                foreach (var b in a.Value)
+                {
+                    if (b.Value < val)
+                    {
+                        val = b.Value;
+                    }
+                    if (b.Value == 0)
+                    {
+                        val = b.Value;
+                        break;
+                    }
+                }
+                if (val != 0)
+                {
+                    completeS2Sets.Add(a.Key, val);
+                    sets += val;
+                }
+            }
+
+         
+
+
+                body += "\r\nNumber of Completed Series 2 Sets(1-43): " + sets;
+                body += "\r\nUnique Owners of Completed Series 2 Sets(1-43): " + completeS2Sets.Count;
+            
+
+
+
+            string[] templatesS3 = { "543001", "542222", "542260", "542272", "542247", "542234", "542271", "542270", "542269", "542268", "542267", "542266", "542265", "542264", "542263", "542262", "542261", "542259", "542258", "542257", "542256", "542255", "542254", "542253", "542252", "542251", "542250", "542249", "542248", "542246", "542245", "542244", "542243", "542242", "542241", "542240", "542239", "542238", "542237", "542236", "542235", "542233", "542232", "542231", "542230", "542229", "542228", "542227", "542226", "542225", "542224", "542223", "542475", "542476" };
+
+            Dictionary<string, Dictionary<string, int>> accountDictS3 = new Dictionary<string, Dictionary<string, int>>();
+
+            i = 0;
+
+            while (i < templatesS3.Length)
+            {
+                string t = templatesS3[i];
+                try
+                {
+                    string address = "https://wax.api.atomicassets.io/atomicassets/v1/accounts?collection_name=hotwheels&schema_name=series3&template_id=" + t + "&page=1&limit=5000&order=desc";
+                    request = (HttpWebRequest)WebRequest.Create(address);
+                    request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+
+                    using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                    using (Stream stream = response.GetResponseStream())
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        string text = reader.ReadToEnd();
+
+                        AccountsRoot accountsRoot = JsonConvert.DeserializeObject<AccountsRoot>(text);
+                        foreach (var data in accountsRoot.data)
+                        {
+                            if (accountDictS3.ContainsKey(data.account))
+                            {
+                                accountDictS3[data.account][t] = int.Parse(data.assets);
+                            }
+                            else if (t == "543001")
+                            {
+                                Dictionary<string, int> temp = new Dictionary<string, int>();
+                                foreach (string plate in templatesS3)
+                                {
+                                    temp.Add(plate, 0);
+                                }
+
+                                accountDictS3.Add(data.account, temp);
+                                accountDictS3[data.account][t] = int.Parse(data.assets);
+                            }
+                        }
+
+
+                    }
+                    System.Threading.Thread.Sleep(1000);
+                    i++;
+
+                }
+                catch (Exception)
+                {
+
+                }
+
+            }
+
+            accountDictS3.Remove("premint.nft");
+            Dictionary<string, int> completeSetsS3 = new Dictionary<string, int>();
+            int setsS3 = 0;
+
+            foreach (var a in accountDictS3)
+            {
+                int val = a.Value["543001"];
+
+                foreach (var b in a.Value)
+                {
+                    if (b.Value < val)
+                    {
+                        val = b.Value;
+                    }
+                    if (b.Value == 0)
+                    {
+                        val = b.Value;
+                        break;
+                    }
+                }
+                if (val != 0)
+                {
+                    completeSetsS3.Add(a.Key, val);
+                    setsS3 += val;
+                }
+            }
+
+                body += "\r\nNumber of Completed Series 3 Sets(1-54): " + setsS3;
+                body += "\r\nUnique Owners of Completed Series 3 Sets(1-43): " + completeSetsS3.Count;
+
+
+            sets = 0;
+            Dictionary<string, int> completeAllSets = new Dictionary<string, int>();
+            foreach (var a in completeS1Sets)
+            {
+                if (completeS2Sets.ContainsKey(a.Key) && completeSetsS3.ContainsKey(a.Key))
+                {
+                    if (completeS2Sets[a.Key] <= a.Value && completeSetsS3[a.Key] <= a.Value)
+                    {
+                        completeAllSets.Add(a.Key, completeS2Sets[a.Key]);
+                        if (completeS2Sets[a.Key] <= a.Value)
+                            sets += completeS2Sets[a.Key];
+                        else if (completeSetsS3[a.Key] <= a.Value)
+                            sets += completeSetsS3[a.Key];
+                    }
+                }
+            }
+
+                body += "\r\nNumber of Owners of Series 1 through Series 3 Completed Sets: " + sets;
+                body += "\r\nNumber of Unique Owners of Series 1 through Series 3 Completed Sets: " + completeAllSets.Count;
+            
+            await FollowupAsync($"**{body}**");
+        }
+
+
+        [SlashCommand("s1s2", "Count of S1 and S2 set holders")]
+        public async Task S1S2Holders()
+        {
+            await DeferAsync();
+            string body;
+
+                            string[] templates = { "353670", "353671", "353672", "353673", "353674", "353675", "353676", "353677", "353678", "353679", "353681", "353682", "353683", "353685", "353691", "353686", "353687", "353688", "353689", "353690", "353693", "353694", "353695", "353696", "353697", "353698", "353700", "353701", "353702", "353703", "353704", "353706", "353707", "353708", "353709", "362065", "362066", "362067", "362068", "353680" };
+
+                HttpWebRequest request;
+
+                Dictionary<string, Dictionary<string, int>> accountS1Dict = new Dictionary<string, Dictionary<string, int>>();
+
+                int i = 0;
+
+                while (i < templates.Length)
+                {
+                    try
+                    {
+                        string t = templates[i];
+
+                        string address = "https://wax.api.atomicassets.io/atomicassets/v1/accounts?collection_name=hotwheels&schema_name=series1&template_id=" + t + "&page=1&limit=5000&order=desc";
+                        request = (HttpWebRequest)WebRequest.Create(address);
+                        request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+
+                        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                        using (Stream stream = response.GetResponseStream())
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            string text = reader.ReadToEnd();
+
+                            AccountsRoot accountsRoot = JsonConvert.DeserializeObject<AccountsRoot>(text);
+                            foreach (var data in accountsRoot.data)
+                            {
+                                if (accountS1Dict.ContainsKey(data.account))
+                                {
+                                    accountS1Dict[data.account][t] = int.Parse(data.assets);
+                                }
+                                else if (t == "353670")
+                                {
+                                    Dictionary<string, int> temp = new Dictionary<string, int>();
+                                    foreach (string plate in templates)
+                                    {
+                                        temp.Add(plate, 0);
+                                    }
+
+                                    accountS1Dict.Add(data.account, temp);
+                                    accountS1Dict[data.account][t] = int.Parse(data.assets);
+                                }
+                            }
+
+
+                        }
+                        System.Threading.Thread.Sleep(1000);
+                        i++;
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
+
+
+                accountS1Dict.Remove("premint.nft");
+                Dictionary<string, int> completeS1Sets = new Dictionary<string, int>();
+                int sets = 0;
+
+                foreach (var a in accountS1Dict)
+                {
+                    int val = a.Value["353670"];
+
+                    foreach (var b in a.Value)
+                    {
+                        if (b.Value < val)
+                        {
+                            val = b.Value;
+                        }
+                        if (b.Value == 0)
+                        {
+                            val = b.Value;
+                            break;
+                        }
+                    }
+                    if (val != 0)
+                    {
+                        completeS1Sets.Add(a.Key, val);
+                        sets += val;
+                    }
+                }
+
+                    body = "\r\nNumber of Completed Series 1 Sets(1-40): " + sets;
+                    body += "\r\nUnique Owners of Completed Series 1 Sets(1-40): " + completeS1Sets.Count;
+                
+
+                string[] templatesS2 = { "473732", "476740", "476739", "476738", "476737", "476736", "473734", "473733", "473730", "473729", "473728", "473727", "473726", "473725", "473724", "473723", "473722", "473720", "473719", "473718", "473717", "473716", "473715", "473714", "473713", "473712", "473710", "473709", "473708", "473707", "473706", "473705", "473704", "473703", "473702", "473700", "473699", "473698", "473697", "473696", "473695", "473694", "473693" };
+
+
+                Dictionary<string, Dictionary<string, int>> accountS2Dict = new Dictionary<string, Dictionary<string, int>>();
+
+                i = 0;
+
+                while (i < templatesS2.Length)
+                {
+                    try
+                    {
+                        string t = templatesS2[i];
+
+                        string address = "https://wax.api.atomicassets.io/atomicassets/v1/accounts?collection_name=hotwheels&schema_name=series2&template_id=" + t + "&page=1&limit=5000&order=desc";
+                        request = (HttpWebRequest)WebRequest.Create(address);
+                        request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+
+                        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                        using (Stream stream = response.GetResponseStream())
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            string text = reader.ReadToEnd();
+
+                            AccountsRoot accountsRoot = JsonConvert.DeserializeObject<AccountsRoot>(text);
+                            foreach (var data in accountsRoot.data)
+                            {
+                                if (accountS2Dict.ContainsKey(data.account))
+                                {
+                                    accountS2Dict[data.account][t] = int.Parse(data.assets);
+                                }
+                                else if (t == "473732")
+                                {
+                                    Dictionary<string, int> temp = new Dictionary<string, int>();
+                                    foreach (string plate in templatesS2)
+                                    {
+                                        temp.Add(plate, 0);
+                                    }
+
+                                    accountS2Dict.Add(data.account, temp);
+                                    accountS2Dict[data.account][t] = int.Parse(data.assets);
+                                }
+                            }
+
+
+                        }
+                        System.Threading.Thread.Sleep(1000);
+                        i++;
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
+                accountS2Dict.Remove("premint.nft");
+                Dictionary<string, int> completeS2Sets = new Dictionary<string, int>();
+                sets = 0;
+
+                foreach (var a in accountS2Dict)
+                {
+                    int val = a.Value["473732"];
+
+                    foreach (var b in a.Value)
+                    {
+                        if (b.Value < val)
+                        {
+                            val = b.Value;
+                        }
+                        if (b.Value == 0)
+                        {
+                            val = b.Value;
+                            break;
+                        }
+                    }
+                    if (val != 0)
+                    {
+                        completeS2Sets.Add(a.Key, val);
+                        sets += val;
+                    }
+                }
+
+                    body += "\r\nNumber of Completed Series 2 Sets(1-43): " + sets;
+                    body += "\r\nUnique Owners of Completed Series 2 Sets(1-43): " + completeS2Sets.Count;
+
+                sets = 0;
+                Dictionary<string, int> completeAllSets = new Dictionary<string, int>();
+                foreach (var a in completeS1Sets)
+                {
+                    if (completeS2Sets.ContainsKey(a.Key))
+                    {
+                        if (completeS2Sets[a.Key] <= a.Value)
+                        {
+                            completeAllSets.Add(a.Key, completeS2Sets[a.Key]);
+                                sets += completeS2Sets[a.Key];
+
+                        }
+                    }
+                }
+                    body += "\r\nNumber of Owners of Series 1 through Series 2 Completed Sets: " + sets;
+                    body += "\r\nNumber of Unique Owners of Series 1 through Series 2 Completed Sets: " + completeAllSets.Count;
+
+            await FollowupAsync($"**{body}**");
+        }
     }
 }
