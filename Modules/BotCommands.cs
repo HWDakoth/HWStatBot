@@ -82,6 +82,7 @@ namespace HWStatBot.Services
         [SlashCommand("s1stats", "Final Stats for Season 1")]
         public async Task S1Stats()
         {
+            await DeferAsync();
             string body;
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://wax.api.atomicassets.io/atomicassets/v1/burns?collection_name=hotwheels&schema_name=coin&template_id=451849&page=1&limit=100&order=desc");
@@ -315,14 +316,14 @@ namespace HWStatBot.Services
                 body += remaining;
             }
 
-            await RespondAsync($"**{body}**");
+            await FollowupAsync($"**{body}**");
         }
 
 
         [SlashCommand("s2stats", "Current Pack and Premium+ Stats for S2")]
         public async Task S2Stats()
         {
-
+            await DeferAsync();
             string body;
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://wax.api.atomicassets.io/atomicassets/v1/burns?collection_name=hotwheels&schema_name=packs&template_id=477399&page=1&limit=10&order=desc");
@@ -410,7 +411,7 @@ namespace HWStatBot.Services
                 body += remaining;
 
             }
-            await RespondAsync($"**{body}**");
+            await FollowupAsync($"**{body}**");
         }
 
 
@@ -418,7 +419,7 @@ namespace HWStatBot.Services
         [SlashCommand("s3stats", "Stats For Season 3 Premium and Above Cars")]
         public async Task S3Stats()
         {
-
+            await DeferAsync();
             string body;
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://wax.api.atomicassets.io/atomicassets/v1/burns?collection_name=hotwheels&schema_name=packs&template_id=542277&page=1&limit=10&order=desc");
@@ -520,13 +521,13 @@ namespace HWStatBot.Services
             }
 
             // reply with the answer
-            await RespondAsync($"**{body}**");
+            await FollowupAsync($"**{body}**");
         }
 
         [SlashCommand("s2redeem", "Stats For Season 2 Redeem")]
         public async Task S2Redeem()
         {
-
+            await DeferAsync();
             string body;
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://wax.api.atomicassets.io/atomicassets/v1/burns?collection_name=hotwheels&schema_name=coin&template_id=564478&page=1&limit=100&order=desc");
@@ -749,7 +750,7 @@ namespace HWStatBot.Services
                     
                 }
             
-                await RespondAsync($"**{body}**");
+                await FollowupAsync($"**{body}**");
 
         
 
