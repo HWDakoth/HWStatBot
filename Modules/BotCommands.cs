@@ -757,7 +757,7 @@ namespace HWStatBot.Services
         }
 
 
-        [SlashCommand("allsets", "Count of all set holders")]
+        [SlashCommand("masterset", "Count of all set holders")]
         public async Task AllSetHolders()
         {
             await DeferAsync();
@@ -1038,15 +1038,11 @@ namespace HWStatBot.Services
             {
                 if (completeS2Sets.ContainsKey(a.Key) && completeSetsS3.ContainsKey(a.Key))
                 {
-                    if (completeS2Sets[a.Key] <= a.Value && completeSetsS3[a.Key] <= a.Value)
-                    {
-                        completeAllSets.Add(a.Key, completeS2Sets[a.Key]);
-                        if (completeS2Sets[a.Key] <= a.Value)
-                            sets += completeS2Sets[a.Key];
-                        else if (completeSetsS3[a.Key] <= a.Value)
-                            sets += completeSetsS3[a.Key];
-                    }
+                    completeAllSets.Add(a.Key, Math.Min(completeS2Sets[a.Key], completeSetsS3[a.Key]));
+                    sets += Math.Min(completeS2Sets[a.Key], completeSetsS3[a.Key]);
+                    
                 }
+
             }
 
                 body += "\r\nNumber of Owners of Series 1 through Series 3 Completed Sets: " + sets;
